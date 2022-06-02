@@ -35,3 +35,9 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+/// <summary>
+///     A partial definition of the Program class that contains the 
+///     application startup code.
+/// </summary>
+public partial class Program { }
