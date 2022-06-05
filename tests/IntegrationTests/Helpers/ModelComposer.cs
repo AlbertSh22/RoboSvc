@@ -1,4 +1,4 @@
-﻿using EntityDal.Models;
+﻿using PublicApi.Models.Classifiers;
 
 namespace IntegrationTests.Helpers
 {
@@ -12,7 +12,7 @@ namespace IntegrationTests.Helpers
         #region Languages
 
         /// <summary>
-        ///     Modifies the Language object to create a new entity in the 
+        ///     Modifies the LanguageViewModel object to create a new entity in the 
         ///     database.
         /// </summary>
         /// <param name="json">
@@ -23,12 +23,13 @@ namespace IntegrationTests.Helpers
         /// </returns>
         internal static string CreateLanguageItem(string json)
         {
-            var item = json.FromJson<Language>();
+            var item = json.FromJson<LanguageViewModel>();
 
             Assert.IsNotNull(item);
 
             item.Id = default;
             item.Name += " 2";
+            item.Alpha2 = "vz";
 
             var newItem = item.ToJson();
 
@@ -36,18 +37,18 @@ namespace IntegrationTests.Helpers
         }
 
         /// <summary>
-        ///     Modifies the Language object to edit an existing entity 
+        ///     Modifies the LanguageViewModel object to edit an existing entity 
         ///     in the database.
         /// </summary>
         /// <param name="json">
         ///     The JSON text to parse.
         /// </param>
         /// <returns>
-        ///     A JSON representation of the modified Language data.
+        ///     A JSON representation of the modified LanguageViewModel data.
         /// </returns>
         internal static string EditLanguageItem(string json)
         {
-            var item = json.FromJson<Language>();
+            var item = json.FromJson<LanguageViewModel>();
 
             Assert.IsNotNull(item);
 

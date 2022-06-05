@@ -34,17 +34,27 @@ namespace EntityDal.Context
             {
                 entity.ToTable("Languages", "clf");
 
+                entity.HasComment("Classifier Languages");
+
+                entity.Property(e => e.Id).HasComment("ID");
+
                 entity.Property(e => e.Alpha2)
                     .HasMaxLength(2)
                     .IsUnicode(false)
-                    .IsFixedLength();
+                    .IsFixedLength()
+                    .HasComment("Codes for the representation of names of languages—Part 1: Alpha-2 code");
 
                 entity.Property(e => e.DigitalCode)
-                    .HasMaxLength(5)
+                    .HasMaxLength(3)
                     .IsUnicode(false)
-                    .IsFixedLength();
+                    .IsFixedLength()
+                    .HasComment("The digital code consisting of 3 Arabic numerals and assigned to languages arranged in the order of Russian names.");
 
-                entity.Property(e => e.Name).HasMaxLength(50);
+                entity.Property(e => e.Name)
+                    .HasMaxLength(50)
+                    .HasComment("ISO language name");
+
+                entity.Property(e => e.Notes).HasComment("Language notes");
             });
 
             OnModelCreatingPartial(modelBuilder);

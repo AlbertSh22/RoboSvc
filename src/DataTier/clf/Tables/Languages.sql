@@ -3,8 +3,9 @@
     [Name]        NVARCHAR (50)  NOT NULL,
     [Alpha2]      CHAR (2)       NOT NULL,
     [Notes]       NVARCHAR (MAX) NULL,
-    [DigitalCode] VARCHAR(5)       NULL,
-    CONSTRAINT [PK_Countries] PRIMARY KEY CLUSTERED ([Id] ASC)
+    [DigitalCode] CHAR (3)       NULL,
+    CONSTRAINT [PK_Countries] PRIMARY KEY CLUSTERED ([Id] ASC),
+    CONSTRAINT [AK_Alpha2] UNIQUE NONCLUSTERED ([Alpha2] ASC)
 );
 
 
@@ -37,7 +38,7 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level2name = N'Alpha2'
 GO
 EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'Digital language code',
+    @value = N'The digital code consisting of 3 Arabic numerals and assigned to languages arranged in the order of Russian names.',
     @level0type = N'SCHEMA',
     @level0name = N'clf',
     @level1type = N'TABLE',

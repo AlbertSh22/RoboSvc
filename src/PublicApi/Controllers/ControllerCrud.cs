@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-
 using Microsoft.EntityFrameworkCore;
+
+using AutoMapper;
 
 using EntityDal.Interfaces;
 using DomainLogic.Interfaces;
@@ -16,14 +17,18 @@ namespace PublicApi.Controllers
     /// <typeparam name="TEntity">
     ///     The domain type the repository manages.
     /// </typeparam>
+    /// <typeparam name="TViewModel">
+    ///     The view model type to pass information to the controller.
+    /// </typeparam>
     [Controller]
-    public abstract class ControllerCrud<TEntity, TId> : 
+    public abstract class ControllerCrud<TEntity, TId, TViewModel> : 
         ControllerBase
         where TEntity : class, IEntity<TId>
         where TId : struct
     {
         #region Fields
 
+        private readonly IMapper _mapper;
         private readonly IGenericRepository<TEntity, TId> _repo;
 
         #endregion
@@ -36,9 +41,15 @@ namespace PublicApi.Controllers
         /// <param name="repo">
         ///     The instance of the generic repository.
         /// </param>
-        protected ControllerCrud(IGenericRepository<TEntity, TId> repo)
+        /// <param name="mapper">
+        ///     The Mapper.AutoMapper object of the AutoMapper library used to map data 
+        ///     from one object to another.
+        /// </param>
+        protected ControllerCrud(IGenericRepository<TEntity, TId> repo,
+            IMapper mapper)
         {
             _repo = repo;
+            _mapper = mapper;
         }
 
         #endregion
@@ -46,17 +57,19 @@ namespace PublicApi.Controllers
         #region Actions
 
         /// <summary>
-        ///     Returns the belonging List for the TEntity.
+        ///     Returns the belonging List for the TViewModel.
         /// </summary>
         /// <returns>
         ///     A task that represents the asynchronous read operation. The task result contains the 
         ///     created OkObjectResult object for the response if TEntity items returned successfully.
         /// </returns>
-        protected virtual async Task<ActionResult<IEnumerable<TEntity>>> GetItemsAsync()
+        protected virtual async Task<ActionResult<IEnumerable<TViewModel>>> GetItemsAsync()
         {
             var result = await _repo.GetAll().ToListAsync();
+
+            var resultVM = _mapper.Map<IEnumerable<TViewModel>>(result);
             
-            return Ok(result);
+            return Ok(resultVM);
         }
 
         /// <summary>
@@ -68,7 +81,7 @@ namespace PublicApi.Controllers
         /// <returns>
         ///     A task that represents the asynchronous read operation. The task result contains the 
         ///     created OkObjectResult object for the response if an entity with the specified ID found; 
-        ///     otherwise, or NotFoundResult object if none found.
+        ///     otherwise, NotFoundResult object if none found.
         /// </returns>
         protected virtual async Task<IActionResult> GetItemAsync(TId id)
         { 
@@ -79,7 +92,9 @@ namespace PublicApi.Controllers
                 return NotFound();
             }
 
-            return Ok(item);
+            var itemVM = _mapper.Map<TViewModel>(item);
+
+            return Ok(itemVM);
         }
 
         /// <summary>
@@ -88,7 +103,7 @@ namespace PublicApi.Controllers
         /// <param name="id">
         ///     The unique identifier of the TEntity item.
         /// </param>
-        /// <param name="item">
+        /// <param name="itemVM">
         ///     The given entity which will be updated into database.
         /// </param>
         /// <returns>
@@ -97,8 +112,10 @@ namespace PublicApi.Controllers
         ///     successfully, or BadRequestResult object for bad request, or NotFoundResult object if 
         ///     none found.
         /// </returns>
-        protected virtual async Task<IActionResult> PutItemAsync(TId id, TEntity item)
+        protected virtual async Task<IActionResult> PutItemAsync(TId id, TViewModel itemVM)
         {
+            var item = _mapper.Map<TEntity>(itemVM);
+            
             if (!id.Equals(item.Id))
             {
                 return BadRequest();
@@ -124,7 +141,7 @@ namespace PublicApi.Controllers
         /// <summary>
         ///     Creates the given entity.
         /// </summary>
-        /// <param name="item">
+        /// <param name="itemVM">
         ///     The given entity which will be inserted into database.
         /// </param>
         /// <param name="actionName">
@@ -135,16 +152,19 @@ namespace PublicApi.Controllers
         ///     created CreatedAtActionResult object for the response if TEntity item was inserted 
         ///     successfully.
         /// </returns>
-        protected virtual async Task<IActionResult> CreateItemAsync(TEntity item, 
+        protected virtual async Task<IActionResult> CreateItemAsync(TViewModel itemVM, 
             string? actionName)
         {
+            var item = _mapper.Map<TEntity>(itemVM);
+
             await _repo.CreateAsync(item);
+
+            var createdItemVM = _mapper.Map<TViewModel>(item);
 
             return CreatedAtAction(
                 actionName,
                 new { id = item.Id },
-                item
-                );
+                createdItemVM);
         }
 
         /// <summary>

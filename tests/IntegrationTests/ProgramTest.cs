@@ -11,7 +11,7 @@ namespace IntegrationTests
     {
         #region Fields
 
-        private static WebApplicationFactory<Program> _application;
+        private static WebApplicationFactory<Program> _application = null!;
 
         #endregion
 

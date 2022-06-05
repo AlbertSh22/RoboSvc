@@ -2,18 +2,23 @@
 
 using Microsoft.AspNetCore.Mvc;
 
+using AutoMapper;
+
 using EntityDal.Models;
 using DomainLogic.Interfaces;
 
 namespace PublicApi.Controllers
 {
+    using Models.Classifiers;
+
     /// <summary>
-    ///     A controller using Language entity in the base class.
+    ///     A controller using Language and LanguageViewModel entities in the base class.
     /// </summary>
     [Route("api/[controller]")]
     [Produces(MediaTypeNames.Application.Json)]
     [ApiController]
-    public class LanguagesController : ControllerCrud<Language, short>
+    public class LanguagesController : 
+        ControllerCrud<Language, short, LanguageViewModel>
     {
         #region Ctor
 
@@ -23,8 +28,12 @@ namespace PublicApi.Controllers
         /// <param name="service">
         ///     The instance of the Language service.
         /// </param>
-        public LanguagesController(ILanguageService service)
-            : base(service)
+        /// <param name="mapper"> 
+        ///     The Mapper.AutoMapper object of the AutoMapper library used to map data
+        ///     from one object to another.
+        /// </param>
+        public LanguagesController(ILanguageService service, 
+            IMapper mapper) : base(service, mapper)
         {
         }
 
@@ -33,25 +42,25 @@ namespace PublicApi.Controllers
         #region Actions
 
         /// <summary>
-        ///     Returns all instances of the Language.
+        ///     Returns all instances of the LanguageViewModel.
         /// </summary>
         /// <returns>
         ///     A task that represents the asynchronous read action. The task result contains the 
         ///     created OkObjectResult object for the response if Language items returned successfully.
         /// </returns>
         /// <response code="200">
-        ///     Returns a list of Language items.
+        ///     Returns a list of LanguageViewModel items.
         /// </response>
         // GET: api/Languages
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<Language>), StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<Language>>> GetLanguages()
+        [ProducesResponseType(typeof(IEnumerable<LanguageViewModel>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<LanguageViewModel>>> GetLanguages()
         {
             return await GetItemsAsync();
         }
 
         /// <summary>
-        ///     Retrieves a Language item by its ID.
+        ///     Retrieves a LanguageViewModel item by its ID.
         /// </summary>
         /// <param name="id">
         ///     The ID of the Language item.
@@ -62,14 +71,14 @@ namespace PublicApi.Controllers
         ///     or NotFoundResult object if none found.
         /// </returns>
         /// <response code="200">
-        ///     Returns the Language item with the given ID.
+        ///     Returns the LanguageViewModel item with the given ID.
         /// </response>
         /// <response code="404">
-        ///     If Language item is not exists.
+        ///     If LanguageViewModel item is not exists.
         /// </response>
         // GET: api/Languages/5
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(Language), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(LanguageViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetLanguage(short id)
         { 
@@ -77,13 +86,13 @@ namespace PublicApi.Controllers
         }
 
         /// <summary>
-        ///     Updates an existing Language item by its ID.
+        ///     Updates an existing LanguageViewModel item by its ID.
         /// </summary>
         /// <param name="id">
-        ///     Language item ID.
+        ///     LanguageViewModel item ID.
         /// </param>
-        /// <param name="item">
-        ///     The Language entity which will be updated into database.
+        /// <param name="itemVM">
+        ///     The LanguageViewModel entity which will be updated into database.
         /// </param>
         /// <returns>
         ///     A task that represents the asynchronous update action. The task result contains the 
@@ -92,7 +101,7 @@ namespace PublicApi.Controllers
         ///     none found.
         /// </returns>
         /// <response code="204">
-        ///     If Language item was updated successfully.
+        ///     If LanguageViewModel item was updated successfully.
         /// </response>
         /// <response code="400">
         ///     For bad request.
@@ -105,16 +114,16 @@ namespace PublicApi.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> PutLanguage(short id, Language item)
+        public async Task<IActionResult> PutLanguage(short id, LanguageViewModel itemVM)
         {
-            return await PutItemAsync(id, item);
+            return await PutItemAsync(id, itemVM);
         }
 
         /// <summary>
-        ///     Creates a new Language item.
+        ///     Creates a new LanguageViewModel item.
         /// </summary>
-        /// <param name="item">
-        ///     The Language entity which will be inserted into database.
+        /// <param name="itemVM">
+        ///     The LanguageViewModel entity which will be inserted into database.
         /// </param>
         /// <returns>
         ///     A task that represents the asynchronous create action. The task result contains the 
@@ -122,14 +131,18 @@ namespace PublicApi.Controllers
         ///     successfully.
         /// </returns>
         /// <response code="201">
-        ///     If Language item was created successfully.
+        ///     If LanguageViewModel item was created successfully.
+        /// </response>
+        /// <response code="400">
+        ///     For bad request.
         /// </response>
         // POST: api/Languages
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<IActionResult> PostLanguage(Language item)
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> PostLanguage(LanguageViewModel itemVM)
         {
-            return await CreateItemAsync(item, nameof(GetLanguage));
+            return await CreateItemAsync(itemVM, nameof(GetLanguage));
         }
 
         /// <summary>

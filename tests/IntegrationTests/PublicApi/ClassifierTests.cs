@@ -1,4 +1,4 @@
-﻿using EntityDal.Models;
+﻿using PublicApi.Models.Classifiers;
 
 namespace IntegrationTests.PublicApi
 {
@@ -19,7 +19,7 @@ namespace IntegrationTests.PublicApi
                     "Languages",
                     ModelComposer.CreateLanguageItem,
                     ModelComposer.EditLanguageItem,
-                    new List<Type> { typeof(Language), typeof(short) }
+                    new List<Type> { typeof(LanguageViewModel), typeof(short) }
                 )
                 // etc ...
             };
