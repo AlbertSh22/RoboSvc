@@ -25,7 +25,5 @@ namespace PublicApi.Configuration
 
             return services;
         }
-
-        
     }
 }

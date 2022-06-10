@@ -1,14 +1,20 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 using EntityDal.Interfaces;
+using DomainLogic.Services;
+using DomainLogic.Interfaces;
 
 namespace PublicApi.Models.Classifiers
 {
+    using Validation;
+    
     /// <summary>
     ///     Represents the data of the Language view model classifier.
     /// </summary>
     public class LanguageViewModel : IEntity<short>
     {
+        #region Properties
+
         /// <summary>
         ///     ID.
         /// </summary>
@@ -18,6 +24,7 @@ namespace PublicApi.Models.Classifiers
         ///     ISO language name.
         /// </summary>
         [Required]
+        [Unique(typeof(ILanguageService), typeof(LanguageService), nameof(Id))]
         [MaxLength(50)]
         public string Name { get; set; } = null!;
 
@@ -42,5 +49,7 @@ namespace PublicApi.Models.Classifiers
         [RegularExpression(@"^$|^[\d]{3}$",
             ErrorMessage = "This value must be zero or contains only 3 Arabic numerals.")]
         public string? DigitalCode { get; set; }
+
+        #endregion
     }
 }
