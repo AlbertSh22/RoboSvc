@@ -59,8 +59,8 @@ namespace DomainLogic.Queries
         ///     The value of the object ID to validate.
         /// </param>
         /// <returns>
-        ///     Returns true is a unique constraint applies to the given 
-        ///     ID and value pair; otherwise, false.
+        ///     An IQueryable that contains elements from the input sequence that 
+        ///     satisfy the condition specified by composed predicate.
         /// </returns>
         public static IQueryable<TEntity> IsUnique<TEntity>(
             this IQueryable<TEntity> query, string propName, object? propValue,
