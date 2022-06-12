@@ -3,9 +3,12 @@
 using EntityDal.Context;
 using EntityDal.Interfaces;
 
+using DomainLogic.Queries;
+
 namespace DomainLogic.Services
 {
     using Interfaces;
+    using Interfaces.Validation;
 
     /// <summary>
     ///     Implements generic repository pattern.
@@ -17,7 +20,7 @@ namespace DomainLogic.Services
     ///     The data type of the ID of the entity.
     /// </typeparam>
     public class GenericRepository<TEntity, TId> :
-        IGenericRepository<TEntity, TId>
+        IGenericRepository<TEntity, TId>, IUniqueConstraint
         where TEntity : class, IEntity<TId>
         where TId : struct
     {
@@ -149,6 +152,38 @@ namespace DomainLogic.Services
             return await _dbContext.Set<TEntity>().AnyAsync(x =>
                 id.Equals(x.Id));
         }
+
+        #region Constrains
+
+        /// <summary>
+        ///     Gets a bool value that indicates whether the given ID and 
+        ///     value pair is unique or not.
+        /// </summary>
+        /// <param name="propertyName">
+        ///     The name of the member to validate.
+        /// </param>
+        /// <param name="propertyValue">
+        ///     The value of the member to validate.
+        /// </param>
+        /// <param name="idName">
+        ///    The name of the object ID to validate.
+        /// </param>
+        /// <param name="idValue">
+        ///     The value of the object ID to validate.
+        /// </param>
+        /// <returns>
+        ///     Returns true is a unique constraint applies to the given 
+        ///     ID and value pair; otherwise, false.
+        /// </returns>
+        public bool IsUnique(string propertyName, object? propertyValue,
+            string idName, object? idValue)
+        {
+            var query = GetAll().IsUnique(propertyName, propertyValue, idName, idValue);
+
+            return !query.Any();
+        }
+
+        #endregion
 
         #endregion
     }
