@@ -5,7 +5,9 @@
     [Notes]       NVARCHAR (MAX) NULL,
     [DigitalCode] CHAR (3)       NULL,
     CONSTRAINT [PK_Countries] PRIMARY KEY CLUSTERED ([Id] ASC),
-    CONSTRAINT [AK_Alpha2] UNIQUE NONCLUSTERED ([Alpha2] ASC)
+    CONSTRAINT [AK_Languages_Name] UNIQUE NONCLUSTERED ([Name] ASC),
+    CONSTRAINT [AK_Languages_Alpha2] UNIQUE NONCLUSTERED ([Alpha2] ASC),
+    CONSTRAINT [AK_Languages_DigitalCode] UNIQUE NONCLUSTERED ([DigitalCode] ASC)
 );
 
 

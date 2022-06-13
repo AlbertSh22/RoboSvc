@@ -32,6 +32,7 @@ namespace PublicApi.Models.Classifiers
         ///     ISO 639-1 code.
         /// </summary>
         [Required]
+        [Unique(typeof(ILanguageService), typeof(LanguageService), nameof(Id))]
         [RegularExpression(@"^[a-z]{2}$", 
             ErrorMessage = "This value must contains only 2 lower case English letters.")]
         public string Alpha2 { get; set; } = null!;
@@ -46,6 +47,7 @@ namespace PublicApi.Models.Classifiers
         ///    assigned to languages arranged in the order of Russian 
         ///    names. 
         /// </summary>
+        [Unique(typeof(ILanguageService), typeof(LanguageService), nameof(Id))]
         [RegularExpression(@"^$|^[\d]{3}$",
             ErrorMessage = "This value must be zero or contains only 3 Arabic numerals.")]
         public string? DigitalCode { get; set; }
