@@ -29,7 +29,8 @@ namespace IntegrationTests.Helpers
 
             item.Id = default;
             item.Name += " 2";
-            item.Alpha2 = "vz";
+            item.Alpha2 = "vo";
+            item.DigitalCode = "007";
 
             var newItem = item.ToJson();
 
